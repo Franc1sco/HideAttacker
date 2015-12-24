@@ -2,7 +2,7 @@
 #include <sourcemod>
 #include <sdktools>
 
-#define PLUGIN_VERSION "b1.2"
+#define PLUGIN_VERSION "b1.3"
 
 new Handle:HideAttackerTs = INVALID_HANDLE;
 new Handle:HideAttackerCt = INVALID_HANDLE;
@@ -56,33 +56,34 @@ public GetCVars()
 
 public Action:event_Death(Handle:event, const String:name[], bool:dontBroadcast)
 {
-    if (!dontBroadcast)
-    {
-        new attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
-
-        if (!attacker)
-            return Plugin_Continue;
-
-	new iTeam = GetClientTeam(attacker);
-        if ((iTeam == 2 && hide_ts) || (iTeam == 3 && hide_cts))  
+	if (!dontBroadcast)
 	{
+		new attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
 
-        	decl String:Weapon[32];
-        	GetEventString(event, "weapon", Weapon, sizeof(Weapon));
+		if (!attacker)
+			return Plugin_Continue;
 
-        	new Handle:newEvent = CreateEvent("player_death", true);
-        	SetEventInt(newEvent, "userid", GetEventInt(event, "userid"));
-        	SetEventInt(newEvent, "attacker", 0);
-        	SetEventString(newEvent, "weapon", Weapon);
-        	SetEventBool(newEvent, "headshot", GetEventBool(event, "headshot"));
-        	SetEventInt(newEvent, "dominated", GetEventInt(event, "dominated"));
-        	SetEventInt(newEvent, "revenge", GetEventInt(event, "revenge"));
+		new iTeam = GetClientTeam(attacker);
+		if ((iTeam == 2 && hide_ts) || (iTeam == 3 && hide_cts))  
+		{
 
-        	FireEvent(newEvent, false); // normal event but without attacker ;)
+			decl String:Weapon[32];
+			GetEventString(event, "weapon", Weapon, sizeof(Weapon));
 
-        	return Plugin_Handled;
+			new Handle:newEvent = CreateEvent("player_death", true);
+			SetEventInt(newEvent, "userid", GetEventInt(event, "userid"));
+			SetEventInt(newEvent, "attacker", 0);
+			SetEventString(newEvent, "weapon", Weapon);
+			SetEventBool(newEvent, "headshot", GetEventBool(event, "headshot"));
+			SetEventInt(newEvent, "dominated", GetEventInt(event, "dominated"));
+			SetEventInt(newEvent, "revenge", GetEventInt(event, "revenge"));
+
+			FireEvent(newEvent, false); // normal event but without attacker ;)
+
+			dontBroadcast = true;
+			return Plugin_Changed;
+		}
 	}
-    }
 
-    return Plugin_Continue;
+	return Plugin_Continue;
 }
