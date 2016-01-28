@@ -2,7 +2,7 @@
 #include <sourcemod>
 #include <sdktools>
 
-#define PLUGIN_VERSION "b1.3"
+#define PLUGIN_VERSION "b1.4"
 
 new Handle:HideAttackerTs = INVALID_HANDLE;
 new Handle:HideAttackerCt = INVALID_HANDLE;
@@ -59,8 +59,10 @@ public Action:event_Death(Handle:event, const String:name[], bool:dontBroadcast)
 	if (!dontBroadcast)
 	{
 		new attacker = GetClientOfUserId(GetEventInt(event, "attacker"));
+		new userid = GetEventInt(event, "userid");
+		new client = GetClientOfUserId(userid);
 
-		if (!attacker)
+		if (!attacker || attacker == client)
 			return Plugin_Continue;
 
 		new iTeam = GetClientTeam(attacker);
@@ -71,8 +73,8 @@ public Action:event_Death(Handle:event, const String:name[], bool:dontBroadcast)
 			GetEventString(event, "weapon", Weapon, sizeof(Weapon));
 
 			new Handle:newEvent = CreateEvent("player_death", true);
-			SetEventInt(newEvent, "userid", GetEventInt(event, "userid"));
-			SetEventInt(newEvent, "attacker", 0);
+			SetEventInt(newEvent, "userid", userid);
+			SetEventInt(newEvent, "attacker", userid);
 			SetEventString(newEvent, "weapon", Weapon);
 			SetEventBool(newEvent, "headshot", GetEventBool(event, "headshot"));
 			SetEventInt(newEvent, "dominated", GetEventInt(event, "dominated"));
