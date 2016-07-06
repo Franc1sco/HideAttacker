@@ -2,7 +2,7 @@
 #include <sourcemod>
 #include <sdktools>
 
-#define PLUGIN_VERSION "b1.4"
+#define PLUGIN_VERSION "b1.5"
 
 new Handle:HideAttackerTs = INVALID_HANDLE;
 new Handle:HideAttackerCt = INVALID_HANDLE;
@@ -16,13 +16,13 @@ public Plugin:myinfo =
 	author = "Franc1sco Steam: franug",
 	description = "Hide attackers",
 	version = PLUGIN_VERSION,
-	url = "www.servers-cfg.foroactivo.com"
+	url = "http://steamcommunity.com/id/franug"
 };
 
 public OnPluginStart()
 {
 
-	CreateConVar("sm_hideattacker_version", PLUGIN_VERSION, "version", FCVAR_PLUGIN|FCVAR_SPONLY|FCVAR_NOTIFY);
+	CreateConVar("sm_hideattacker_version", PLUGIN_VERSION, "version", FCVAR_SPONLY|FCVAR_NOTIFY);
 
 	HideAttackerTs = CreateConVar("sm_hideattacker_ts", "1", "hide Ts attackers");
 
@@ -83,7 +83,7 @@ public Action:event_Death(Handle:event, const String:name[], bool:dontBroadcast)
 			FireEvent(newEvent, false); // normal event but without attacker ;)
 
 			dontBroadcast = true;
-			return Plugin_Changed;
+			return Plugin_Handled;
 		}
 	}
 
